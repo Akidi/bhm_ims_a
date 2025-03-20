@@ -1,0 +1,4 @@
+FROM postgres:17 AS migrate
+WORKDIR /migrations
+COPY ./drizzle /migrations
+CMD ["sh", "-c", "for f in /migrations/*.sql; do psql $DATABASE_URL -f \"$f\"; done"]
