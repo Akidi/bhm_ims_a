@@ -2,8 +2,8 @@
 
 services:
   app:
-    image: app:dev
-    container_name: app.dev
+    image: bhm_ims:dev
+    container_name: bhm_ims.dev
     build:
       context: ./app
       target: development
@@ -33,7 +33,7 @@ services:
 
   db:
     image: postgres:17
-    container_name: db.dev
+    container_name: bhm_ims.db.dev
     ports:
       - 5432:5432
     env_file:
@@ -49,24 +49,23 @@ services:
       retries: 5
     networks:
       - bhm_ims-internal
+      - bhm_ims
   
-  drizzle-studio:
-      build:
-        context: ./app
-        dockerfile: ./Dockerfile.drizzle
-      container_name: app.drizzle-studio
-      ports:
-        - 4983:4983
-      env_file:
-        - .env.dev
-      depends_on:
-        db:
-          condition: service_healthy
-      restart: unless-stopped
-      command: npx drizzle-kit studio --host=0.0.0.0 --port 4983
-      networks:
-        - bhm_ims-internal
-        - bhm_ims
+  # drizzle-studio:
+  #   image: bhm_ims:drizzle-studio
+  #   container_name: bhm_ims.drizzle-studio
+  #   ports:
+  #     - 4983:4983
+  #     env_file:
+  #       - .env.dev
+  #     depends_on:
+  #       db:
+  #         condition: service_healthy
+  #     restart: unless-stopped
+  #     command: npx drizzle-kit studio --host=0.0.0.0 --port 4983
+  #     networks:
+  #       - bhm_ims-internal
+  #       - bhm_ims
 
 networks:
   bhm_ims:
@@ -79,5 +78,6 @@ networks:
 volumes:
   db_data:
     driver: local
-    name: db.dev
+    name: bhm_ims.db.dev
   node_modules:
+    name: bhm_ims.node_modules

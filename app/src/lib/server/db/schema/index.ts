@@ -7,6 +7,8 @@ import { taxClasses } from './tax_classes';
 import { departments } from './departments';
 import { seasons } from './seasons';
 import { items } from './items';
+import { user } from './users';
+import { session } from './sessions';
 
 // Export types for easy access
 export type { Location, NewLocation } from './locations';
@@ -18,11 +20,16 @@ export type { TaxClass, NewTaxClass } from './tax_classes';
 export type { Department, NewDepartment } from './departments';
 export type { Season, NewSeason } from './seasons';
 export type { Item, NewItem } from './items';
+export type { User, NewUser } from './users';
+export type { Session, NewSession } from './sessions';
+
 
 // Export all tables in a single object
 export const tables = {
   locations,
   categories,
+  user  ,
+  session,
   vendors,
   warehouses,
   brands,

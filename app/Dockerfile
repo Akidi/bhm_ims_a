@@ -1,5 +1,6 @@
 # Base stage (shared setup)
-FROM node:20-slim AS base
+FROM node:22-slim AS base
+LABEL stage=base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
@@ -7,6 +8,7 @@ WORKDIR /app
 
 # Dev stage (full setup for development)
 FROM base AS dev
+LABEL stage=dev
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 COPY package.json pnpm-lock.yaml ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
@@ -14,14 +16,17 @@ COPY . .
 
 # Development target (just the dev-ready image)
 FROM dev AS development
+LABEL stage=development
 RUN pnpm svelte-kit sync
 
 # Build stage (for production)
 FROM dev AS build
+LABEL stage=build
 RUN pnpm run build
 
 # Production stage (lean runtime)
 FROM node:20-slim AS production
+LABEL stage=production
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable

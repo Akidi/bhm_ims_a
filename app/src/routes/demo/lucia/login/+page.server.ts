@@ -4,9 +4,8 @@ import { fail, redirect } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import * as auth from '$lib/server/auth';
 import { writeDb, readDB } from '$lib/server/db';
-import * as table from '$lib/server/db/schema';
 import type { Actions, PageServerLoad } from './$types';
-
+import {tables} from '$lib/server/db/schema/';
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
 		return redirect(302, '/demo/lucia');
@@ -29,7 +28,7 @@ export const actions: Actions = {
 			return fail(400, { message: 'Invalid password (min 6, max 255 characters)' });
 		}
 
-		const results = await readDB.select().from(table.user).where(eq(table.user.username, username));
+		const results = await readDB.select().from(tables.user).where(eq(tables.user.username, username));
 
 		const existingUser = results.at(0);
 		if (!existingUser) {
@@ -74,13 +73,13 @@ export const actions: Actions = {
 		});
 
 		try {
-			await writeDb.insert(table.user).values({ id: userId, username, passwordHash });
+			await writeDb.insert(tables.user).values({ id: userId, username, passwordHash });
 
 			const sessionToken = auth.generateSessionToken();
 			const session = await auth.createSession(sessionToken, userId);
 			auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
 		} catch (e) {
-			return fail(500, { message: 'An error has occurred' });
+			return fail(500, { message: 'An error has occurred', error: String(e) });
 		}
 		return redirect(302, '/demo/lucia');
 	}

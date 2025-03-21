@@ -1,6 +1,7 @@
 # /// ./app/Dockerfile.drizzle
 
 FROM node:22-slim
+LABEL stage=drizzle.studio
 WORKDIR /app
 
 # RUN apt update
