@@ -78,7 +78,8 @@
 	"pnpm": {
 		"onlyBuiltDependencies": [
 			"esbuild",
-			"msw"
+			"msw",
+			"svelte-preprocess"
 		]
 	}
 }
